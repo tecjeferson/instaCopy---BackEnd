@@ -1,14 +1,28 @@
 const express = require('express')
 const mongoose = require('mongoose')
+const path = require('path')
+const cors = require('cors')
 
 const app = express()
+
+const server = require('http').Server(app)
+const io = require('socket.io')(server)
 
 //connection with database
 mongoose.connect('mongodb+srv://omnistack:omnistack@cluster0-jgadg.mongodb.net/test?retryWrites=true&w=majority',{
     useNewUrlParser:true,
 })
 
-//it makes recognize the routes by 'routes.js' 
+app.use((req, res, next) =>{
+    req.io = io
+    next()
+})
+
+//it makes recognize the routes by 'routes.js'
+app.use(cors())
+
+app.use('/files', express.static(path.resolve(__dirname, '..', 'uploads', 'resized')))
+
 app.use(require('./routes'))
 
-app.listen(3000)
+server.listen(3333)

@@ -5,15 +5,17 @@ const cors = require('cors')
 
 const app = express()
 
+const port = process.env.PORT || 3333
+
 const server = require('http').Server(app)
 const io = require('socket.io')(server)
 
 //connection with database
-mongoose.connect('mongodb+srv://omnistack:omnistack@cluster0-jgadg.mongodb.net/test?retryWrites=true&w=majority',{
-    useNewUrlParser:true,
+mongoose.connect('mongodb+srv://omnistack:omnistack@cluster0-jgadg.mongodb.net/test?retryWrites=true&w=majority', {
+    useNewUrlParser: true,
 })
 
-app.use((req, res, next) =>{
+app.use((req, res, next) => {
     req.io = io
     next()
 })
@@ -25,4 +27,10 @@ app.use('/files', express.static(path.resolve(__dirname, '..', 'uploads', 'resiz
 
 app.use(require('./routes'))
 
-server.listen(3333)
+app.listen(port, err => {
+    if (err) {
+        console.log('The server could nor starts')
+    } else {
+        console.log('Server running in port 3333')
+    }
+})
